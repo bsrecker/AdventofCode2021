@@ -5,6 +5,7 @@ class Navigation:
         self.navigation_data = navigation_data
         self.horizontal_pos = 0
         self.depth_pos = 0
+        self.aim = 0
 
         for line in self.navigation_data:
             if line.startswith("forward"):
@@ -12,21 +13,21 @@ class Navigation:
                 for m in line:
                     if m.isdigit():
                         value = value + m
-                self.change_horizontal(int(value))
+                self.change_aim(int(value), "forward")
 
             if line.startswith("up"):
                 value = ""
                 for m in line:
                     if m.isdigit():
                         value = value + m
-                self.change_depth(int(value) * -1)
+                self.change_aim(int(value), "up")
 
             if line.startswith("down"):
                 value = ""
                 for m in line:
                     if m.isdigit():
                         value = value + m
-                self.change_depth(int(value))
+                self.change_aim(int(value), "down")
 
     # Increase/decrease horizontal
     def change_horizontal(self, value):
@@ -43,6 +44,20 @@ class Navigation:
         return f"The final position is - Horizontal: " \
                f"{self.horizontal_pos} Depth: {self.depth_pos}" \
                f"\nFinal Position: {self.horizontal_pos * self.depth_pos}"
+
+    # change the aim
+    def change_aim(self, value, position):
+        match position:
+
+            case "forward":
+                self.change_horizontal(value)
+                self.change_depth(self.aim * value)
+
+            case "up":
+                self.aim += (value * -1)
+
+            case "down":
+                self.aim += value
 
 
 with open("resources/navigation report", "r") as f:

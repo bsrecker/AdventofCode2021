@@ -1,19 +1,29 @@
-sonar_report = open("resources/sonar report", "r")
-measurements = sonar_report.readlines()
+def get_increases(measurements):
+    prev_depth = measurements[0]
+    increases = 0
 
-increased_count = 0
+    for depth in measurements[1:]:
+        if depth > prev_depth:
+            increases += 1
+        prev_depth = depth
 
-for i in range(len(measurements)):
-    current_depth = int(measurements[i].strip())
-    previous_depth = int(measurements[i - 1].strip())
-
-    if current_depth > previous_depth:
-        increased_count += 1
-        print(f'{current_depth} (increased)')
-
-    else:
-        print(f'{current_depth} (N/A)' if i == 0 else f"{current_depth} (decreased)")
+    return increases
 
 
-print(f'Number of increases: {increased_count}')
+with open("resources/sonar report", "r") as f:
+    lines = f.readlines()
+    measurements = [int(depth.strip()) for depth in lines]
 
+    ### A
+    increases = get_increases(measurements)
+    print(increases)
+
+    ### B
+    window_size = 3
+    sliding_windows = [
+        sum(measurements[i : i + window_size])
+        for i in range(len(measurements) - window_size + 1)
+    ]
+
+    increases = get_increases(sliding_windows)
+    print(increases)
